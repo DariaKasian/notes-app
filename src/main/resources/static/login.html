@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+<body>
+<h1>login</h1> <!--Самый крупный и важный заголовок-->
+
+<input type="text" id="username" placeholder="Benutzername"> <!--placeholder-Подсказка внутри поля (серый текст)-->
+<br><br>
+
+<input type="password" id="password" placeholder="Passwort">
+<br><br>
+
+<button onclick="login()">Einloggen</button> <!--button-Создаёт кнопку, onclick="login()"-вызывается функция login()-->
+<p>Noch keine Konto?<a href="register.html">Registrieren</a></p>  <!--href — это атрибут тега <a> (ссылки)-->
+<!--<p> — это тег абзаца (paragraph)-Просто выводит текст как отдельный абзац-->
+
+<!--<script> = запуск JavaScript в HTML-->
+<script>
+    async function login() {
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+
+        console.log("login gestartet");
+
+        try {
+            const response = await fetch("/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    username: username,
+                    password: password
+                })
+            });
+
+            console.log("Antwort:", response.status);
+
+            if (response.ok) {
+                const user = await response.json();
+
+                // speichern
+                localStorage.setItem("userId", user.id);
+
+                alert("Login erfolgreich");
+
+                // weiter zur nächsten Seite
+                window.location.href = "/notes.html";
+
+            } else {
+                alert("Login fehlgeschlagen");
+            }
+
+        } catch (error) {
+            console.error("Fehler:", error);
+            alert("Server nicht erreichbar");
+        }
+    }
+</script>
+
+
+</body>
+</html>

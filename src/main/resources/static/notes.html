@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Notes</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        ul {
+            padding: 0;
+        }
+
+        li {
+            list-style: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 300px;
+            margin-bottom: 8px;
+        }
+
+        .note-text {
+            flex: 1;
+        }
+
+        button {
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Meine Notizen</h1>
+
+<input type="text" id="content" placeholder="Inhalt">
+<br><br>
+
+<button onclick="addNote()">Hinzufügen</button>
+
+<h2>Liste:</h2>
+<ul id="notesList"></ul>
+
+<script>
+    async function loadNotes() {
+        const response = await fetch("/notes");
+        const notes = await response.json();
+
+        const list = document.getElementById("notesList");
+        list.innerHTML = "";
+
+        notes.forEach(note => {
+            const li = document.createElement("li");
+
+            const text = document.createElement("span");
+            text.className = "note-text";
+            text.innerText = note.content;
+
+            const btn = document.createElement("button");
+            btn.innerText = "Löschen";
+            btn.onclick = () => deleteNote(note.id);
+
+            li.appendChild(text);
+            li.appendChild(btn);
+            list.appendChild(li);
+        });
+    }
+
+    async function addNote() {
+        const content = document.getElementById("content").value;
+
+        await fetch("/notes", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                content: content
+            })
+        });
+
+        document.getElementById("content").value = "";
+        loadNotes();
+    }
+
+    async function deleteNote(id) {
+        await fetch("/notes/" + id, {
+            method: "DELETE"
+        });
+
+        loadNotes();
+    }
+
+    loadNotes();
+</script>
+
+</body>
+</html>
