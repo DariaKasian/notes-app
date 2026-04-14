@@ -16,7 +16,7 @@ Simple notes application built with Java Spring Boot and JavaScript.
 
 ## How to run
 1. Start the Spring Boot application
-2. Open browser: http://localhost:8080/notes.html
+2. Open browser: http://localhost:8085/notes.html
 
 ## Author
 Daria Kasian
